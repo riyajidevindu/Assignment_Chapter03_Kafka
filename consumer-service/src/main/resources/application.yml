@@ -1,0 +1,31 @@
+server:
+  port: ${SERVER_PORT:8083}
+
+spring:
+  application:
+    name: consumer-service
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
+    properties:
+      "[schema.registry.url]": ${SCHEMA_REGISTRY_URL:http://schema-registry:8081}
+      "[specific.avro.reader]": true
+    consumer:
+      group-id: order-consumer-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+    listener:
+      ack-mode: MANUAL
+
+logging:
+  level:
+    root: INFO
+    org:
+      apache:
+        kafka:
+          clients:
+            consumer: INFO
+    com:
+      example:
+        consumer: DEBUG

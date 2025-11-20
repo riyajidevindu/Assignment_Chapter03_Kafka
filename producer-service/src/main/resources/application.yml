@@ -1,0 +1,30 @@
+server:
+  port: ${SERVER_PORT:8082}
+
+spring:
+  application:
+    name: producer-service
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
+    client-id: producer-service
+    properties:
+      "[schema.registry.url]": ${SCHEMA_REGISTRY_URL:http://schema-registry:8081}
+      "[auto.register.schemas]": true
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      acks: all
+      retries: 5
+    template:
+      default-topic: ${ORDERS_TOPIC:orders}
+
+logging:
+  level:
+    root: INFO
+    org:
+      apache:
+        kafka:
+          clients: INFO
+    com:
+      example:
+        producer: DEBUG
