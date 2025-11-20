@@ -1,11 +1,11 @@
 # syntax=docker/dockerfile:1
-FROM maven:3.9.9-eclipse-temurin-17 AS builder
+FROM cgr.dev/chainguard/maven:latest AS builder
 WORKDIR /workspace
 COPY pom.xml ./
 COPY src ./src
 RUN mvn -B -DskipTests clean package
 
-FROM eclipse-temurin:17-jre
+FROM cgr.dev/chainguard/jre:latest
 WORKDIR /app
 COPY --from=builder /workspace/target/consumer-service-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8083
