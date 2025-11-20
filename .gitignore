@@ -1,0 +1,22 @@
+# Maven build output
+**/target/
+**/logs/
+
+# IDE/editor files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.sw?
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Docker / runtime files
+*.pid
+*.log
+
+# Avro generated sources (regenerated on build)
+**/target/generated-sources/avro/
