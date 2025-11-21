@@ -1,6 +1,9 @@
 # syntax=docker/dockerfile:1
 FROM cgr.dev/chainguard/maven:latest AS builder
+USER root
 WORKDIR /workspace
+RUN chown -R nonroot:nonroot /workspace
+USER nonroot
 COPY pom.xml ./
 COPY src ./src
 RUN mvn -B -DskipTests clean package
