@@ -56,6 +56,7 @@ docker-compose up --build
 Compose will:
 - start Zookeeper (2181), Kafka (9092), Schema Registry (8081)
 - build & run the producer (8082) and consumer (8083) Spring Boot services
+- launch Kafka UI (Provectus) on http://localhost:8080 for topic inspection
 - wire Kafka + Schema Registry endpoints into both services via env vars
 
 ### Testing the Producer REST API
@@ -77,6 +78,7 @@ curl -X POST "http://localhost:8082/produce/bulk?count=50"
 - Follow producer logs: `docker compose logs -f producer-service`
 - Follow consumer logs: `docker compose logs -f consumer-service`
 - Kafka broker logs: `docker compose logs -f kafka`
+- Kafka UI dashboard: http://localhost:8080 (select the `local` cluster to browse topics, inspect partitions, and view consumer lag)
 
 Consumer logs show each order plus the running average:
 
