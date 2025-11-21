@@ -5,12 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/produce")
 public class OrderController {
 
     private static final Logger log = LoggerFactory.getLogger(OrderController.class);
@@ -23,7 +21,7 @@ public class OrderController {
         this.orderProducerService = orderProducerService;
     }
 
-    @PostMapping
+    @PostMapping({"/produce", "/api/orders"})
     public ResponseEntity<String> produceSingle() {
         Order order = orderGenerator.randomOrder();
         orderProducerService.send(order);
@@ -31,7 +29,7 @@ public class OrderController {
         return ResponseEntity.accepted().body("Order dispatched: " + order.getOrderId());
     }
 
-    @PostMapping("/bulk")
+    @PostMapping({"/produce/bulk", "/api/orders/bulk"})
     public ResponseEntity<String> produceBulk(@RequestParam(name = "count", defaultValue = "10") int count) {
         if (count <= 0) {
             return ResponseEntity.badRequest().body("count must be greater than 0");
