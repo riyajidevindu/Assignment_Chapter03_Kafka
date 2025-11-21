@@ -13,6 +13,8 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 @Component
@@ -22,6 +24,7 @@ public class OrderConsumer {
     private static final DecimalFormat PRICE_FORMAT = new DecimalFormat("0.00");
 
     private final Random random = new Random();
+    private final Map<String, ProductStats> productAverages = new HashMap<>();
     private double totalPrice = 0;
     private int count = 0;
 
@@ -35,10 +38,20 @@ public class OrderConsumer {
     public void consume(Order order, Acknowledgment acknowledgement) {
         log.info("Received order {} for {} priced at {}", order.getOrderId(), order.getProduct(), order.getPrice());
         maybeFail();
+        ProductStats stats = productAverages.computeIfAbsent(order.getProduct(), key -> new ProductStats());
+        stats.add(order.getPrice());
+
         totalPrice += order.getPrice();
         count++;
-        double average = totalPrice / count;
-        log.info("Running average after {} orders: {}", count, PRICE_FORMAT.format(average));
+
+        double productAverage = stats.average();
+        double overallAverage = totalPrice / count;
+        log.info("Averages => {} [{}]: {} | Overall [{}]: {}",
+            order.getProduct(),
+            stats.count,
+            PRICE_FORMAT.format(productAverage),
+            count,
+            PRICE_FORMAT.format(overallAverage));
         acknowledgement.acknowledge();
     }
 
@@ -50,6 +63,20 @@ public class OrderConsumer {
     private void maybeFail() {
         if (random.nextInt(10) < 2) {
             throw new RuntimeException("Simulated failure");
+        }
+    }
+
+    private static class ProductStats {
+        private double total = 0;
+        private int count = 0;
+
+        void add(double price) {
+            this.total += price;
+            this.count++;
+        }
+
+        double average() {
+            return count == 0 ? 0 : total / count;
         }
     }
 }
