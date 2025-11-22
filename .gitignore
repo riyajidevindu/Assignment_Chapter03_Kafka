@@ -2,8 +2,6 @@
 **/target/
 **/logs/
 
-**/node_modules
-
 # IDE/editor files
 .idea/
 *.iml
